@@ -26,6 +26,10 @@ function msg() {
 LASTCMD=""
 WGETOPT="-t 1 -T 15 -q"
 
+  echo -e "${CHECKMARK} \e[1;92m Updating Container OS... \e[0m"
+  apt update &>/dev/null
+  apt-get -qqy upgrade &>/dev/null
+
   # Cleanup
   apt-get remove --purge -y build-essential python3-dev git -qq &>/dev/null
   apt-get autoremove -y -qq &>/dev/null
