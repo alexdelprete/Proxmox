@@ -74,7 +74,7 @@ pushd $TEMP_DIR >/dev/null
 
 wget -qL https://raw.githubusercontent.com/tteck/Proxmox/wip/ha_setup.sh
 
-#wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64
+wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64
 
 load_module overlay
 
@@ -157,7 +157,7 @@ pct unmount $CTID && unset MOUNT
 
 echo -e "${CHECKMARK} \e[1;92m Starting LXC Container... \e[0m"
 pct start $CTID
-#pct push $CTID fuse-overlayfs /usr/local/bin/fuse-overlayfs -perms 755
+pct push $CTID fuse-overlayfs /usr/local/bin/fuse-overlayfs -perms 755
 pct push $CTID ha_setup.sh /ha_setup.sh -perms 755
 pct exec $CTID /ha_setup.sh
 
