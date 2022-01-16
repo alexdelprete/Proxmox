@@ -49,6 +49,7 @@ function cleanup_ctid() {
     if [ "$(pct status $CTID | awk '{print $2}')" == "running" ]; then
       pct stop $CTID
     fi
+    pct destroy $CTID
   elif [ "$(pvesm list $STORAGE --vmid $CTID)" != "" ]; then
     pvesm free $ROOTFS
   fi
