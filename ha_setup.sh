@@ -35,7 +35,11 @@ apt-get -qqy upgrade &>/dev/null
 
 echo -e "${CHECKMARK} \e[1;92m Installing Dependencies... \e[0m"
 apt-get -qqy install \
-    curl &>/dev/null
+    curl \
+    wget &>/dev/null
+    
+echo -e "${CHECKMARK} \e[1;92m Installing fuse-overlayfs... \e[0m"
+wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64 &>/dev/null
 
 echo -e "${CHECKMARK} \e[1;92m Customizing Docker... \e[0m"
 DOCKER_CONFIG_PATH='/etc/docker/daemon.json'
@@ -46,8 +50,8 @@ cat >$DOCKER_CONFIG_PATH <<'EOF'
 }
 EOF
 
-echo -e "${CHECKMARK} \e[1;92m Installing Docker... \e[0m"
-sh <(curl -sSL https://get.docker.com) &>/dev/null
+echo -e "${CHECKMARK} \e[1;92m Installing Docker.io... \e[0m"
+apt-get install docker.io &>/dev/null
 
 echo -e "${CHECKMARK} \e[1;92m Installing Portainer... \e[0m"
 docker volume create portainer_data >/dev/null
