@@ -38,8 +38,8 @@ apt-get -qqy install \
     curl \
     wget &>/dev/null
     
-echo -e "${CHECKMARK} \e[1;92m Installing fuse-overlayfs... \e[0m"
-wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64 -p /usr/local/bin
+#echo -e "${CHECKMARK} \e[1;92m Installing fuse-overlayfs... \e[0m"
+#wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64 -p /usr/local/bin
 
 echo -e "${CHECKMARK} \e[1;92m Customizing Docker... \e[0m"
 DOCKER_CONFIG_PATH='/etc/docker/daemon.json'
