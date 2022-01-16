@@ -51,7 +51,7 @@ cat >$DOCKER_CONFIG_PATH <<'EOF'
 EOF
 
 echo -e "${CHECKMARK} \e[1;92m Installing Docker.io... \e[0m"
-apt-get install docker.io &>/dev/null
+apt-get install -y docker.io &>/dev/null
 
 echo -e "${CHECKMARK} \e[1;92m Installing Portainer... \e[0m"
 docker volume create portainer_data >/dev/null
