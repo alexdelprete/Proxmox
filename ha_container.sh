@@ -72,7 +72,7 @@ function load_module() {
 TEMP_DIR=$(mktemp -d)
 pushd $TEMP_DIR >/dev/null
 
-wget -qL https://raw.githubusercontent.com/tteck/Proxmox/main/ha_setup.sh
+wget -qL https://raw.githubusercontent.com/tteck/Proxmox/wip/ha_setup.sh
 
 #wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64
 
