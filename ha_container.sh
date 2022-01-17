@@ -74,8 +74,6 @@ pushd $TEMP_DIR >/dev/null
 
 wget -qL https://raw.githubusercontent.com/tteck/Proxmox/wip/ha_setup.sh
 
-wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64
-
 load_module overlay
 
 while read -r line; do
@@ -134,17 +132,23 @@ echo -e "${CHECKMARK} \e[1;92m Creating LXC Container... \e[0m"
 DISK_SIZE=8G
 pvesm alloc $STORAGE $CTID $DISK $DISK_SIZE --format ${DISK_FORMAT:-raw} >/dev/null
 if [ "$STORAGE_TYPE" == "zfspool" ]; then
+  wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64
   warn "Some containers may not work properly due to ZFS not supporting 'fallocate'."
-else
-  mkfs.ext4 $(pvesm path $ROOTFS) &>/dev/null
-fi
-ARCH=$(dpkg --print-architecture)
+  ARCH=$(dpkg --print-architecture)
 HOSTNAME=homeassistant
 TEMPLATE_STRING="local:vztmpl/${TEMPLATE}"
 pct create $CTID $TEMPLATE_STRING -arch $ARCH -features fuse=1,keyctl=1,mknod=1,nesting=1 \
   -hostname $HOSTNAME -net0 name=eth0,bridge=vmbr0,ip=dhcp -onboot 1 -cores 2 -memory 2048 \
   -ostype $OSTYPE -rootfs $ROOTFS,size=$DISK_SIZE -storage $STORAGE >/dev/null
-
+else
+  mkfs.ext4 $(pvesm path $ROOTFS) &>/dev/null
+ARCH=$(dpkg --print-architecture)
+HOSTNAME=homeassistant
+TEMPLATE_STRING="local:vztmpl/${TEMPLATE}"
+pct create $CTID $TEMPLATE_STRING -arch $ARCH -features nesting=1 \
+  -hostname $HOSTNAME -net0 name=eth0,bridge=vmbr0,ip=dhcp -onboot 1 -cores 2 -memory 2048 \
+  -ostype $OSTYPE -rootfs $ROOTFS,size=$DISK_SIZE -storage $STORAGE >/dev/null
+fi
 LXC_CONFIG=/etc/pve/lxc/${CTID}.conf
 cat <<EOF >> $LXC_CONFIG
 lxc.cgroup2.devices.allow: a
@@ -157,10 +161,14 @@ pct unmount $CTID && unset MOUNT
 
 echo -e "${CHECKMARK} \e[1;92m Starting LXC Container... \e[0m"
 pct start $CTID
+if [ "$STORAGE_TYPE" == "zfspool" ]; then
 pct push $CTID fuse-overlayfs /usr/local/bin/fuse-overlayfs -perms 755
 pct push $CTID ha_setup.sh /ha_setup.sh -perms 755
 pct exec $CTID /ha_setup.sh
-
+else
+pct push $CTID ha_setup.sh /ha_setup.sh -perms 755
+pct exec $CTID /ha_setup.sh
+fi
 IP=$(pct exec $CTID ip a s dev eth0 | sed -n '/inet / s/\// /p' | awk '{print $2}')
 info "Successfully Created Home Assistant Container LXC to $CTID."
 msg "
