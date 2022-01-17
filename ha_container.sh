@@ -135,7 +135,7 @@ if [ "$STORAGE_TYPE" == "zfspool" ]; then
   wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64
   warn "Some containers may not work properly due to ZFS not supporting 'fallocate'."
   ARCH=$(dpkg --print-architecture)
-HOSTNAME=homeassistant
+HOSTNAME=homeassistant-zfs
 TEMPLATE_STRING="local:vztmpl/${TEMPLATE}"
 pct create $CTID $TEMPLATE_STRING -arch $ARCH -features fuse=1,keyctl=1,mknod=1,nesting=1 \
   -hostname $HOSTNAME -net0 name=eth0,bridge=vmbr0,ip=dhcp -onboot 1 -cores 2 -memory 2048 \
@@ -143,7 +143,7 @@ pct create $CTID $TEMPLATE_STRING -arch $ARCH -features fuse=1,keyctl=1,mknod=1,
 else
   mkfs.ext4 $(pvesm path $ROOTFS) &>/dev/null
 ARCH=$(dpkg --print-architecture)
-HOSTNAME=homeassistant
+HOSTNAME=homeassistant-ext4
 TEMPLATE_STRING="local:vztmpl/${TEMPLATE}"
 pct create $CTID $TEMPLATE_STRING -arch $ARCH -features nesting=1 \
   -hostname $HOSTNAME -net0 name=eth0,bridge=vmbr0,ip=dhcp -onboot 1 -cores 2 -memory 2048 \
