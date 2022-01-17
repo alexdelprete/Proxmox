@@ -141,9 +141,9 @@ fi
 ARCH=$(dpkg --print-architecture)
 HOSTNAME=homeassistant
 TEMPLATE_STRING="local:vztmpl/${TEMPLATE}"
-pct create $CTID $TEMPLATE_STRING -arch $ARCH -features fuse=1 keyctl=1 mknod=1 nesting=1 \
-  -hostname $HOSTNAME -net0 name=eth0 bridge=vmbr0 ip=dhcp -onboot 1 -cores 2 -memory 2048 \
-  -ostype $OSTYPE -rootfs $ROOTFS size=$DISK_SIZE -storage $STORAGE >/dev/null
+pct create $CTID $TEMPLATE_STRING -arch $ARCH -features fuse=1,keyctl=1,mknod=1,nesting=1 \
+  -hostname $HOSTNAME -net0 name=eth0,bridge=vmbr0,ip=dhcp -onboot 1 -cores 2 -memory 2048 \
+  -ostype $OSTYPE -rootfs $ROOTFS,size=$DISK_SIZE -storage $STORAGE >/dev/null
 
 LXC_CONFIG=/etc/pve/lxc/${CTID}.conf
 cat <<EOF >> $LXC_CONFIG
